@@ -1,4 +1,4 @@
-import type { Profile, UpdateProfilePayload } from '#/types';
+import type { Profile, UpdateProfilePayload } from '../types';
 import { client } from './client';
 
 export type TargetRole = 'software_developer' | 'sales_manager' | 'product_manager';

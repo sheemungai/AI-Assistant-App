@@ -1,4 +1,4 @@
-import type { CreateQuestionPayload, CreateSampleAnswerPayload, Question, SampleAnswer } from '#/types';
+import type { CreateQuestionPayload, CreateSampleAnswerPayload, Question, SampleAnswer } from '../types';
 import { client } from './client';
 
 

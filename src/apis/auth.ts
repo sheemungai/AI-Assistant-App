@@ -1,4 +1,4 @@
-import type { AuthResponse, LoginPayload, Profile, RegisterPayload } from "#/types";
+import type { AuthResponse, LoginPayload, AccountProfile, RegisterPayload } from "../types";
 import { client } from "./client";
 
 const BASE = "/accounts"; 
@@ -24,5 +24,5 @@ export const authApi = {
     client.clearTokens();
   },
 
-  getProfile: () => client.get<Profile>(`${BASE}/profile/`),
+  getProfile: () => client.get<AccountProfile>(`${BASE}/profile/`),
 };

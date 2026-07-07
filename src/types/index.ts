@@ -1,5 +1,6 @@
-import type { Difficulty, QuestionType, Role } from "#/apis/questions";
-import type { ExperienceLevel, TargetRole } from "#/apis/users";
+import type { Status } from "../apis/interviews";
+import type { Difficulty, QuestionType, Role } from "../apis/questions";
+import type { ExperienceLevel, TargetRole } from "../apis/users";
 
 export interface AuthUser {
   id: number;
@@ -28,7 +29,7 @@ export interface LoginPayload {
   password: string;
 }
 
-export interface Profile {
+export interface AccountProfile {
   username: string;
   email: string;
   user_type: "admin" | "user";
@@ -56,7 +57,7 @@ export interface UpdateProfilePayload {
 
 export interface SampleAnswer {
     id: number;
-    is_ideal: boolean;
+    is_ideal?: boolean;
     content: string;
     created_at: string;
     updated_at: string;
@@ -65,7 +66,7 @@ export interface SampleAnswer {
 export interface CreateSampleAnswerPayload {
     question_id: number;
     content: string;
-    is_ideal: boolean;
+    is_ideal?: boolean;
 }
 
 export interface Question {
@@ -88,4 +89,66 @@ export interface CreateQuestionPayload {
     difficulty?: Difficulty;
     question_type?: QuestionType;
     role?: Role;
+}
+
+export interface AnalyticsOverview {
+  total_sessions: number;
+  total_answers: number;
+  average_score: number;
+}
+
+export interface TopicStat {
+  topic: string;
+  average_score: number;
+  total_answers: number;
+}
+
+export interface TrendEntry {
+  date: string;
+  title: string;
+  role: Role;
+  overall_score: number;
+}
+
+export interface Answer {
+  id: number;
+  session: number;
+  question: number;
+  response_text: string;
+  ai_score: string | null;
+  ai_feedback: string;
+  ai_strengths: string[];
+  ai_improvements: string[];
+  is_evaluated: boolean;
+  created_at: string;
+  updated_at: string;
+
+}
+
+export interface CreateAnswerSubmissionPayload {
+  session: number;
+  question: number;
+  response_text?: string;
+
+}
+
+export interface InterviewSession {
+  id: number;
+  title: string;
+  role: Role;
+  experience_level: ExperienceLevel | null;
+  questions: number[];
+  status: Status;
+  overall_score: string | null;
+  answers: Answer[];
+  created_at: string;
+  updated_at: string;
+
+}
+
+export interface CreateInterviewSessionPayload {
+  title: string;
+  role: Role;
+  experience_level?: ExperienceLevel | null;
+  question_ids?: number[];
 }
