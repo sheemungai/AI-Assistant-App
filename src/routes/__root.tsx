@@ -4,6 +4,7 @@ import { TanStackDevtools } from '@tanstack/react-devtools'
 
 import '../styles.css'
 import type { QueryClient } from '@tanstack/react-query'
+import { Navbar } from '#/components/Navbar'
 
 interface RouterContext {
   queryClient: QueryClient
@@ -16,6 +17,7 @@ export const Route = createRootRouteWithContext<RouterContext>()({
 function RootComponent() {
   return (
     <>
+      <Navbar />
       <Outlet />
       <TanStackDevtools
         config={{
