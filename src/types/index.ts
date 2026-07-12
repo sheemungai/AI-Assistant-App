@@ -18,10 +18,12 @@ export interface AuthResponse {
 }
 
 export interface RegisterPayload {
+  full_name: string;
   username: string;
   email: string;
   password: string;
-  full_name?: string;
+  password2: string;
+  user_type?: 'admin' | 'user';
 }
 
 export interface LoginPayload {

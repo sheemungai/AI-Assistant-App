@@ -6,6 +6,7 @@ const navLinks = [
   { to: '/', label: 'Home' },
   { to: '/questions', label: 'Questions' },
   { to: '/dashboard', label: 'Dashboard' },
+
 ] as const
 
 export function Navbar() {
@@ -19,8 +20,8 @@ export function Navbar() {
   }
 
   return (
-    <nav className="flex items-center justify-between px-6 py-4 border-b">
-      <Link to="/" className="font-semibold text-lg">
+    <nav className="flex items-center justify-between px-6 py-4 border-b bg-gray-800">
+      <Link to="/" className="font-semibold text-lg text-white">
         AI Interview Assistant
       </Link>
 
@@ -30,7 +31,7 @@ export function Navbar() {
             key={link.to}
             from = "/"
             // to={link.to}
-            className="text-sm text-gray-600"
+            className="text-sm text-white font-medium hover:text-gray-300"
             activeProps={{ className: 'text-sm text-black font-medium' }}
           >
             {link.label}
@@ -40,12 +41,12 @@ export function Navbar() {
         {isLoggedIn ? (
           <button
             onClick={handleLogout}
-            className="text-sm text-red-600"
+            className="text-sm text-red-600 hover:text-red-800"
           >
             Logout
           </button>
         ) : (
-          <Link to="/" className="text-sm text-blue-600">
+          <Link to="/login" className="text-sm text-blue-600 hover:text-blue-800">
             Login
           </Link>
         )}
