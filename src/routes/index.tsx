@@ -1,87 +1,67 @@
-import { createFileRoute } from '@tanstack/react-router'
-import { useMutation, useQuery } from '@tanstack/react-query'
-import { useState } from 'react'
-import { authApi } from '@/apis/auth'
+import { createFileRoute, Link } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/')({ component: Home })
 
 function Home() {
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
-  const [isLoggedIn, setIsLoggedIn] = useState(
-    !!localStorage.getItem('access_token'),
-  )
-
-  const loginMutation = useMutation({
-    mutationFn: authApi.login,
-    onSuccess: () => setIsLoggedIn(true),
-  })
-
-  const profileQuery = useQuery({
-    queryKey: ['profile'],
-    queryFn: authApi.getProfile,
-    enabled: isLoggedIn, // only fires once logged in
-  })
+  const isLoggedIn = !!localStorage.getItem('access_token')
 
   return (
-    <div className="flex flex-col gap-4 p-8 max-w-sm mx-auto">
-      <h1 className="text-xl font-semibold">Backend Connection Test</h1>
+    <div className="flex flex-col items-center justify-center text-center gap-6 px-6 py-24">
+      <h1 className="text-4xl font-bold tracking-tight">
+        Ace Your Next Interview
+      </h1>
+      <p className="text-gray-600 max-w-md">
+        Practice real interview questions and get instant AI feedback on your
+        answers — so you walk in prepared.
+      </p>
 
-      {!isLoggedIn ? (
-        <>
-          <input
-            className="border rounded p-2"
-            placeholder="Username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-          />
-          <input
-            className="border rounded p-2"
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          <button
-            className="bg-blue-600 text-white rounded p-2 disabled:opacity-50"
-            onClick={() => loginMutation.mutate({ username, password })}
-            disabled={loginMutation.isPending || !username || !password}
-          >
-            {loginMutation.isPending ? 'Logging in...' : 'Login'}
-          </button>
-          {loginMutation.isError && (
-            <p className="text-red-600 text-sm">{loginMutation.error.message}</p>
-          )}
-        </>
+      {isLoggedIn ? (
+        <Link
+          to="/"
+          className="bg-blue-600 text-white rounded px-6 py-3 font-medium hover:bg-blue-700"
+        >
+          Go to Dashboard
+        </Link>
       ) : (
-        <div className="border rounded p-4 space-y-2">
-          <p className="text-green-700 font-medium">✅ Logged in</p>
-
-          {profileQuery.isLoading && <p>Loading profile...</p>}
-
-          {profileQuery.isError && (
-            <p className="text-red-600 text-sm">
-              Profile error: {profileQuery.error.message}
-            </p>
-          )}
-
-          {profileQuery.isSuccess && (
-            <pre className="text-xs bg-gray-100 p-2 rounded overflow-auto">
-              {JSON.stringify(profileQuery.data, null, 2)}
-            </pre>
-          )}
-
-          <button
-            className="text-sm text-red-600 underline"
-            onClick={() => {
-              authApi.logout()
-              setIsLoggedIn(false)
-            }}
+        <div className="flex gap-3">
+          <Link
+            to="/register"
+            className="bg-blue-600 text-white rounded px-6 py-3 font-medium hover:bg-blue-700"
           >
-            Logout
-          </button>
+            Get Started
+          </Link>
+          <Link
+            to="/login"
+            className="border rounded px-6 py-3 font-medium hover:bg-gray-200"
+          >
+            Log in
+          </Link>
         </div>
       )}
+
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-12 max-w-3xl">
+        <FeatureCard
+          title="Practice Questions"
+          description="Behavioral, technical, and situational questions across roles and difficulty levels."
+        />
+        <FeatureCard
+          title="AI Feedback"
+          description="Get a score, strengths, and improvement tips on every answer you submit."
+        />
+        <FeatureCard
+          title="Track Progress"
+          description="See your trends over time and know exactly where to focus."
+        />
+      </div>
+    </div>
+  )
+}
+
+function FeatureCard({ title, description }: { title: string; description: string }) {
+  return (
+    <div className="border rounded p-4 text-left">
+      <h3 className="font-medium mb-1">{title}</h3>
+      <p className="text-sm text-gray-600">{description}</p>
     </div>
   )
 }

@@ -5,7 +5,7 @@ import { authApi } from '@/apis/auth'
 const navLinks = [
   { to: '/', label: 'Home' },
   { to: '/questions', label: 'Questions' },
-  { to: '/dashboard', label: 'Dashboard' },
+  // { to: '/dashboard', label: 'Dashboard' },
 
 ] as const
 
@@ -29,8 +29,8 @@ export function Navbar() {
         {navLinks.map((link) => (
           <Link
             key={link.to}
-            from = "/"
-            // to={link.to}
+            // from = "/"
+            to={link.to}
             className="text-sm text-white font-medium hover:text-gray-300"
             activeProps={{ className: 'text-sm text-black font-medium' }}
           >
