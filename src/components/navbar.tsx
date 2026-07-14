@@ -1,18 +1,33 @@
 import { Link } from '@tanstack/react-router'
 import { useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import { authApi } from '@/apis/auth'
 
-const navLinks = [
+type NavLink = {
+  to: '/' | '/questions' | '/dashboard'
+  label: string
+}
+
+const navLinks: NavLink[] = [
   { to: '/', label: 'Home' },
   { to: '/questions', label: 'Questions' },
-  // { to: '/dashboard', label: 'Dashboard' },
+  { to: '/dashboard', label: 'Dashboard' },
+]
 
-] as const
+function getDisplayName(profile?: { profile?: { full_name?: string }; username?: string }) {
+  return profile?.profile?.full_name || profile?.username || 'Profile'
+}
 
 export function Navbar() {
-  const [isLoggedIn, setIsLoggedIn] = useState(
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(
     !!localStorage.getItem('access_token'),
   )
+
+  const profileQuery = useQuery({
+    queryKey: ['profile'],
+    queryFn: authApi.getProfile,
+    enabled: isLoggedIn,
+  })
 
   const handleLogout = async () => {
     await authApi.logout()
@@ -20,8 +35,8 @@ export function Navbar() {
   }
 
   return (
-    <nav className="flex items-center justify-between px-6 py-4 border-b bg-gray-800">
-      <Link to="/" className="font-semibold text-lg text-white">
+    <nav className="flex items-center justify-between border-b px-6 py-4">
+      <Link to="/" className="text-lg font-semibold tracking-tight text-gray-900">
         AI Interview Assistant
       </Link>
 
@@ -29,24 +44,34 @@ export function Navbar() {
         {navLinks.map((link) => (
           <Link
             key={link.to}
-            // from = "/"
             to={link.to}
-            className="text-sm text-white font-medium hover:text-gray-300"
-            activeProps={{ className: 'text-sm text-black font-medium' }}
+            className="text-sm text-gray-600 transition-colors hover:text-gray-900"
+            activeProps={{ className: 'text-sm font-medium text-gray-900' }}
           >
             {link.label}
           </Link>
         ))}
 
         {isLoggedIn ? (
-          <button
-            onClick={handleLogout}
-            className="text-sm text-red-600 hover:text-red-800"
-          >
-            Logout
-          </button>
+          <div className="flex items-center gap-4">
+            <Link
+              to="/profile"
+              className="text-sm font-medium text-gray-700 transition-colors hover:text-gray-900"
+            >
+              {getDisplayName(profileQuery.data)}
+            </Link>
+            <button
+              onClick={handleLogout}
+              className="text-sm text-red-600 transition-colors hover:text-red-700"
+            >
+              Logout
+            </button>
+          </div>
         ) : (
-          <Link to="/login" className="text-sm text-blue-600 hover:text-blue-800">
+          <Link
+            to="/login"
+            className="text-sm font-medium text-blue-600 transition-colors hover:text-blue-700"
+          >
             Login
           </Link>
         )}

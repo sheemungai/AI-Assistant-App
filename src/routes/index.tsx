@@ -17,7 +17,7 @@ function Home() {
 
       {isLoggedIn ? (
         <Link
-          to="/"
+          to="/dashboard"
           className="bg-blue-600 text-white rounded px-6 py-3 font-medium hover:bg-blue-700"
         >
           Go to Dashboard

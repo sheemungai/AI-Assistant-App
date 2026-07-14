@@ -35,7 +35,7 @@ export interface AccountProfile {
   username: string;
   email: string;
   user_type: "admin" | "user";
-  profile: Record<string, unknown>;
+  profile: Profile;
 }
 
 export interface Profile {
