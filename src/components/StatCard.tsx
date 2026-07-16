@@ -5,9 +5,11 @@ interface StatCardProps {
 
 export function StatCard({ label, value }: StatCardProps) {
   return (
-    <div className="border rounded p-4">
-      <p className="text-sm text-gray-500">{label}</p>
-      <p className="text-2xl font-semibold mt-1">{value}</p>
+    <div className="rounded-2xl border border-white/10 bg-white/5 p-5 shadow-lg shadow-black/20 ring-1 ring-inset ring-white/5 backdrop-blur">
+      <p className="text-sm font-medium text-slate-300">{label}</p>
+      <p className="mt-2 text-3xl font-semibold tracking-tight text-slate-50">
+        {value}
+      </p>
     </div>
   )
 }

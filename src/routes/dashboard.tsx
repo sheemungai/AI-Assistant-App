@@ -8,84 +8,152 @@ function DashboardPage() {
   const { overview, byTopic, trend } = useDashboard()
 
   return (
-    <div className="max-w-4xl mx-auto p-8 flex flex-col gap-8">
-      <h1 className="text-2xl font-semibold">Dashboard</h1>
+    <div className="relative min-h-[calc(100vh-4rem)] overflow-hidden bg-slate-950 px-6 py-12 text-slate-50">
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(56,189,248,0.14),transparent_30%),radial-gradient(circle_at_bottom_right,rgba(244,114,182,0.10),transparent_26%)]" />
 
-      {/* Overview */}
-      <section>
-        {overview.isLoading && <p>Loading overview...</p>}
-        {overview.isError && <p className="text-red-600">{overview.error.message}</p>}
-        {overview.data && (
-          <div className="grid grid-cols-3 gap-4">
-            <StatCard label="Completed Sessions" value={overview.data.total_sessions} />
-            <StatCard label="Answers Given" value={overview.data.total_answers} />
-            <StatCard label="Average Score" value={`${overview.data.average_score}/10`} />
+      <div className="relative mx-auto flex max-w-6xl flex-col gap-8 pb-8">
+        <section className="flex flex-col gap-3">
+          <div className="inline-flex w-fit items-center gap-2 rounded-full border border-cyan-400/30 bg-cyan-400/10 px-4 py-2 text-sm text-cyan-100 backdrop-blur">
+            <span className="h-2 w-2 rounded-full bg-cyan-300" />
+            Your interview progress at a glance
           </div>
-        )}
-      </section>
 
-      {/* By Topic */}
-      <section>
-        <h2 className="text-lg font-medium mb-3">Performance by Topic</h2>
-        {byTopic.isLoading && <p>Loading...</p>}
-        {byTopic.isError && <p className="text-red-600">{byTopic.error.message}</p>}
-        {byTopic.data && byTopic.data.length === 0 && (
-          <p className="text-gray-500 text-sm">No topic data yet — complete a session to see stats.</p>
-        )}
-        {byTopic.data && byTopic.data.length > 0 && (
           <div className="flex flex-col gap-2">
-            {byTopic.data.map((t) => (
-              <div key={t.topic} className="flex items-center gap-3">
-                <span className="w-32 text-sm truncate">{t.topic}</span>
-                <div className="flex-1 bg-gray-100 rounded h-4 overflow-hidden">
-                  <div
-                    className="bg-blue-500 h-full"
-                    style={{ width: `${(t.average_score / 10) * 100}%` }}
-                  />
-                </div>
-                <span className="text-sm text-gray-600 w-20 text-right">
-                  {t.average_score.toFixed(1)}/10
-                </span>
-                <span className="text-xs text-gray-400 w-16 text-right">
-                  {t.total_answers} answer{t.total_answers !== 1 ? 's' : ''}
-                </span>
-              </div>
-            ))}
+            <h1 className="text-4xl font-semibold tracking-tight text-balance sm:text-5xl">
+              Dashboard
+            </h1>
+            <p className="max-w-2xl text-sm leading-6 text-slate-300 sm:text-base">
+              Review completed sessions, inspect topic performance, and track
+              how your interview practice is improving over time.
+            </p>
           </div>
-        )}
-      </section>
+        </section>
 
-      {/* Trend */}
-      <section>
-        <h2 className="text-lg font-medium mb-3">Session History</h2>
-        {trend.isLoading && <p>Loading...</p>}
-        {trend.isError && <p className="text-red-600">{trend.error.message}</p>}
-        {trend.data && trend.data.length === 0 && (
-          <p className="text-gray-500 text-sm">No completed sessions yet.</p>
-        )}
-        {trend.data && trend.data.length > 0 && (
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="text-left text-gray-500 border-b">
-                <th className="py-2">Date</th>
-                <th className="py-2">Title</th>
-                <th className="py-2">Role</th>
-                <th className="py-2 text-right">Score</th>
-              </tr>
-            </thead>
-            <tbody>
-              {trend.data.map((entry, i) => (
-                <tr key={i} className="border-b last:border-0">
-                  <td className="py-2">{entry.date}</td>
-                  <td className="py-2">{entry.title}</td>
-                  <td className="py-2">{entry.role.replace('_', ' ')}</td>
-                  <td className="py-2 text-right">{entry.overall_score}/10</td>
-                </tr>
+        <section>
+          {overview.isLoading && (
+            <div className="rounded-2xl border border-white/10 bg-white/5 p-6 text-sm text-slate-300 backdrop-blur">
+              Loading overview...
+            </div>
+          )}
+
+          {overview.isError && (
+            <div className="rounded-2xl border border-red-500/20 bg-red-500/10 p-6 text-sm text-red-200 backdrop-blur">
+              {overview.error.message}
+            </div>
+          )}
+
+          {overview.data && (
+            <div className="grid gap-4 md:grid-cols-3">
+              <StatCard label="Completed Sessions" value={overview.data.total_sessions} />
+              <StatCard label="Answers Given" value={overview.data.total_answers} />
+              <StatCard label="Average Score" value={`${overview.data.average_score}/10`} />
+            </div>
+          )}
+        </section>
+
+        <section className="rounded-3xl border border-white/10 bg-white/5 p-6 shadow-2xl shadow-black/25 ring-1 ring-inset ring-white/5 backdrop-blur">
+          <div className="mb-5 flex items-center justify-between gap-4">
+            <div>
+              <h2 className="text-lg font-semibold text-slate-50">Performance by Topic</h2>
+              <p className="mt-1 text-sm text-slate-300">
+                See which topics are strongest and where to focus next.
+              </p>
+            </div>
+          </div>
+
+          {byTopic.isLoading && (
+            <div className="text-sm text-slate-300">Loading...</div>
+          )}
+
+          {byTopic.isError && (
+            <div className="text-sm text-red-300">{byTopic.error.message}</div>
+          )}
+
+          {byTopic.data && byTopic.data.length === 0 && (
+            <p className="text-sm text-slate-400">
+              No topic data yet — complete a session to see stats.
+            </p>
+          )}
+
+          {byTopic.data && byTopic.data.length > 0 && (
+            <div className="flex flex-col gap-4">
+              {byTopic.data.map((topic) => (
+                <div
+                  key={topic.topic}
+                  className="grid items-center gap-3 md:grid-cols-[10rem_minmax(0,1fr)_5rem_5.5rem]"
+                >
+                  <span className="truncate text-sm font-medium text-slate-200">
+                    {topic.topic}
+                  </span>
+
+                  <div className="h-3 overflow-hidden rounded-full bg-slate-900/80 ring-1 ring-inset ring-white/10">
+                    <div
+                      className="h-full rounded-full bg-linear-to-r from-cyan-400 to-sky-500 shadow-[0_0_20px_rgba(34,211,238,0.25)]"
+                      style={{ width: `${(topic.average_score / 10) * 100}%` }}
+                    />
+                  </div>
+
+                  <span className="text-right text-sm font-medium text-slate-200">
+                    {topic.average_score.toFixed(1)}/10
+                  </span>
+
+                  <span className="text-right text-xs text-slate-400">
+                    {topic.total_answers} answer{topic.total_answers !== 1 ? 's' : ''}
+                  </span>
+                </div>
               ))}
-            </tbody>
-          </table>
-        )}
-      </section>
+            </div>
+          )}
+        </section>
+
+        <section className="rounded-3xl border border-white/10 bg-white/5 p-6 shadow-2xl shadow-black/25 ring-1 ring-inset ring-white/5 backdrop-blur">
+          <div className="mb-5">
+            <h2 className="text-lg font-semibold text-slate-50">Session History</h2>
+            <p className="mt-1 text-sm text-slate-300">
+              Review recent sessions and track score trends.
+            </p>
+          </div>
+
+          {trend.isLoading && <div className="text-sm text-slate-300">Loading...</div>}
+
+          {trend.isError && (
+            <div className="text-sm text-red-300">{trend.error.message}</div>
+          )}
+
+          {trend.data && trend.data.length === 0 && (
+            <p className="text-sm text-slate-400">No completed sessions yet.</p>
+          )}
+
+          {trend.data && trend.data.length > 0 && (
+            <div className="overflow-hidden rounded-2xl border border-white/10">
+              <table className="w-full text-sm">
+                <thead className="bg-slate-900/70 text-left text-slate-300">
+                  <tr>
+                    <th className="px-4 py-3 font-medium">Date</th>
+                    <th className="px-4 py-3 font-medium">Title</th>
+                    <th className="px-4 py-3 font-medium">Role</th>
+                    <th className="px-4 py-3 text-right font-medium">Score</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-white/10 bg-white/5">
+                  {trend.data.map((entry, index) => (
+                    <tr key={index} className="transition-colors hover:bg-white/5">
+                      <td className="px-4 py-3 text-slate-300">{entry.date}</td>
+                      <td className="px-4 py-3 text-slate-100">{entry.title}</td>
+                      <td className="px-4 py-3 text-slate-300">
+                        {entry.role.replace('_', ' ')}
+                      </td>
+                      <td className="px-4 py-3 text-right font-medium text-cyan-200">
+                        {entry.overall_score}/10
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </section>
+      </div>
     </div>
   )
 }

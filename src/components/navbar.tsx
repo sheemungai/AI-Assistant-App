@@ -1,7 +1,7 @@
 import { Link } from '@tanstack/react-router'
-import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { authApi } from '@/apis/auth'
+import { useAuth } from '@/lib/auth'
 
 type NavLink = {
   to: '/' | '/questions' | '/dashboard'
@@ -19,9 +19,7 @@ function getDisplayName(profile?: { profile?: { full_name?: string }; username?:
 }
 
 export function Navbar() {
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(
-    !!localStorage.getItem('access_token'),
-  )
+  const isLoggedIn = useAuth()
 
   const profileQuery = useQuery({
     queryKey: ['profile'],
@@ -31,7 +29,6 @@ export function Navbar() {
 
   const handleLogout = async () => {
     await authApi.logout()
-    setIsLoggedIn(false)
   }
 
   return (
