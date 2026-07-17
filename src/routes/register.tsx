@@ -5,6 +5,18 @@ import { authApi } from '@/apis/auth'
 
 export const Route = createFileRoute('/register')({ component: RegisterPage })
 
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
+function getPasswordChecks(password: string) {
+  return {
+    length: password.length >= 8,
+    uppercase: /[A-Z]/.test(password),
+    lowercase: /[a-z]/.test(password),
+    number: /[0-9]/.test(password),
+    special: /[^A-Za-z0-9]/.test(password),
+  }
+}
+
 function RegisterPage() {
   const navigate = useNavigate()
   const [fullName, setFullName] = useState('')
@@ -12,6 +24,7 @@ function RegisterPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [password2, setPassword2] = useState('')
+  const [passwordFocused, setPasswordFocused] = useState(false)
 
   const registerMutation = useMutation({
     mutationFn: authApi.register,
@@ -20,12 +33,21 @@ function RegisterPage() {
     },
   })
 
+  const emailTouched = email.length > 0
+  const emailValid = emailRegex.test(email)
+
+  const checks = getPasswordChecks(password)
+  const allChecksPass = Object.values(checks).every(Boolean)
+  const passwordsMismatch = password2.length > 0 && password !== password2
+
+  const canSubmit =
+    !!fullName && !!username && emailValid && allChecksPass && !!password2 && !passwordsMismatch
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
+    if (!canSubmit) return
     registerMutation.mutate({ full_name: fullName, username, email, password, password2 })
   }
-
-  const passwordsMismatch = password2.length > 0 && password !== password2
 
   return (
     <div className="relative min-h-[calc(100vh-4rem)] overflow-hidden bg-slate-950 px-6 py-14 text-slate-50">
@@ -100,12 +122,19 @@ function RegisterPage() {
                   Email
                 </label>
                 <input
-                  className="w-full rounded-xl border border-white/10 bg-slate-900/60 px-4 py-3 text-slate-50 outline-none transition focus:border-cyan-300/40 focus:ring-2 focus:ring-cyan-400/20"
+                  className={`w-full rounded-xl border bg-slate-900/60 px-4 py-3 text-slate-50 outline-none transition focus:ring-2 ${
+                    emailTouched && !emailValid
+                      ? 'border-red-400/60 focus:border-red-400/60 focus:ring-red-400/20'
+                      : 'border-white/10 focus:border-cyan-300/40 focus:ring-cyan-400/20'
+                  }`}
                   type="email"
                   placeholder="Enter your email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                 />
+                {emailTouched && !emailValid && (
+                  <p className="mt-1 text-xs text-red-300">Enter a valid email address.</p>
+                )}
               </div>
 
               <div>
@@ -118,7 +147,17 @@ function RegisterPage() {
                   placeholder="Create a password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  onFocus={() => setPasswordFocused(true)}
                 />
+                {(passwordFocused || password.length > 0) && (
+                  <ul className="mt-2 grid grid-cols-2 gap-x-3 gap-y-1 text-xs">
+                    <PasswordRule met={checks.length} label="At least 8 characters" />
+                    <PasswordRule met={checks.uppercase} label="One uppercase letter" />
+                    <PasswordRule met={checks.lowercase} label="One lowercase letter" />
+                    <PasswordRule met={checks.number} label="One number" />
+                    <PasswordRule met={checks.special} label="One special character" />
+                  </ul>
+                )}
               </div>
 
               <div>
@@ -126,29 +165,25 @@ function RegisterPage() {
                   Confirm password
                 </label>
                 <input
-                  className="w-full rounded-xl border border-white/10 bg-slate-900/60 px-4 py-3 text-slate-50 outline-none transition focus:border-cyan-300/40 focus:ring-2 focus:ring-cyan-400/20"
+                  className={`w-full rounded-xl border bg-slate-900/60 px-4 py-3 text-slate-50 outline-none transition focus:ring-2 ${
+                    passwordsMismatch
+                      ? 'border-red-400/60 focus:border-red-400/60 focus:ring-red-400/20'
+                      : 'border-white/10 focus:border-cyan-300/40 focus:ring-cyan-400/20'
+                  }`}
                   type="password"
                   placeholder="Confirm your password"
                   value={password2}
                   onChange={(e) => setPassword2(e.target.value)}
                 />
+                {passwordsMismatch && (
+                  <p className="mt-1 text-xs text-red-300">Passwords do not match.</p>
+                )}
               </div>
-
-              {passwordsMismatch && (
-                <p className="text-sm text-red-300">Passwords do not match.</p>
-              )}
 
               <button
                 type="submit"
                 className="mt-2 inline-flex items-center justify-center rounded-full bg-cyan-400 px-5 py-3 text-sm font-semibold text-slate-950 shadow-lg shadow-cyan-400/30 transition-transform duration-200 hover:-translate-y-0.5 hover:bg-cyan-300 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0"
-                disabled={
-                  registerMutation.isPending ||
-                  !fullName ||
-                  !username ||
-                  !email ||
-                  !password ||
-                  passwordsMismatch
-                }
+                disabled={registerMutation.isPending || !canSubmit}
               >
                 {registerMutation.isPending ? 'Signing up...' : 'Sign up'}
               </button>
@@ -168,5 +203,14 @@ function RegisterPage() {
         </div>
       </div>
     </div>
+  )
+}
+
+function PasswordRule({ met, label }: { met: boolean; label: string }) {
+  return (
+    <li className={`flex items-center gap-1.5 ${met ? 'text-emerald-300' : 'text-slate-500'}`}>
+      <span>{met ? '✓' : '○'}</span>
+      {label}
+    </li>
   )
 }

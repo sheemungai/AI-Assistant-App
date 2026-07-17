@@ -1,4 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useSession } from '@/hooks/useSession'
 import { useQuestionsByIds } from '@/hooks/useQuestionsByIds'
@@ -13,6 +13,7 @@ function SessionPage() {
   const { sessionId } = Route.useParams()
   const id = Number(sessionId)
   const queryClient = useQueryClient()
+  const navigate = useNavigate()
 
   const { data: session, isLoading, isError, error } = useSession(id)
   const questionQueries = useQuestionsByIds(session?.questions ?? [])
@@ -20,7 +21,8 @@ function SessionPage() {
   const completeMutation = useMutation({
     mutationFn: () => interviewSessionApi.complete(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['session', id] })
+      queryClient.invalidateQueries({ queryKey: ['analytics'] })
+      navigate({ to: '/dashboard' })
     },
   })
 

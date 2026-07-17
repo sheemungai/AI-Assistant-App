@@ -5,7 +5,6 @@ import type { ExperienceLevel, TargetRole } from '@/apis/users'
 
 export const Route = createFileRoute('/profile')({ component: ProfilePage })
 
-const targetRoles: TargetRole[] = ['software_developer', 'sales_manager', 'product_manager']
 const experienceLevels: ExperienceLevel[] = ['entry', 'mid', 'senior']
 
 function ProfilePage() {
@@ -18,7 +17,7 @@ function ProfilePage() {
   useEffect(() => {
     if (data) {
       setFullName(String(data.profile.full_name))
-      setTargetRole(data.profile.target_role ?? '')
+      setTargetRole((data.profile.target_role as TargetRole | null) ?? '')
       setExperienceLevel(data.profile.experience_level ?? '')
     }
   }, [data])
@@ -120,18 +119,12 @@ function ProfilePage() {
                 <label className="mb-2 block text-sm font-medium text-slate-200">
                   Target role
                 </label>
-                <select
-                  className="w-full rounded-xl border border-white/10 bg-slate-900/60 px-4 py-3 text-slate-50 outline-none transition focus:border-cyan-300/40 focus:ring-2 focus:ring-cyan-400/20"
+                <input
+                  className="border rounded p-2 w-full"
+                  placeholder="e.g. Junior Developer, UX Designer"
                   value={targetRole}
                   onChange={(e) => setTargetRole(e.target.value as TargetRole | '')}
-                >
-                  <option value="">Not set</option>
-                  {targetRoles.map((role) => (
-                    <option key={role} value={role}>
-                      {role.replace('_', ' ')}
-                    </option>
-                  ))}
-                </select>
+                />      
               </div>
 
               <div>

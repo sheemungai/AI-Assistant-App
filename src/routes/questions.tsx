@@ -1,15 +1,14 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute,  Link } from '@tanstack/react-router'
 import { useState } from 'react'
 import { useQuestions } from '@/hooks/useQuestions'
 import { useCreateSession } from '@/hooks/useCreateSession'
 import { QuestionCard } from '@/components/QuestionCard'
-import type { Difficulty, QuestionType, Role } from '@/apis/questions'
+import type { Difficulty, QuestionType } from '@/apis/questions'
 
 export const Route = createFileRoute('/questions')({ component: QuestionsPage })
 
 const difficulties: Difficulty[] = ['easy', 'medium', 'hard']
 const questionTypes: QuestionType[] = ['behavioral', 'technical', 'situational']
-const roles: Role[] = ['software_developer', 'sales_manager', 'product_manager']
 
 function QuestionsPage() {
   const {
@@ -60,6 +59,9 @@ function QuestionsPage() {
               <h1 className="text-4xl font-semibold tracking-tight text-balance sm:text-5xl">
                 Question Bank
               </h1>
+              <Link to="/generate" className="text-sm text-yellow-400  underline">
+                + Generate a new question
+              </Link>
               <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-300 sm:text-base">
                 Filter by difficulty, question type, and role. Pick a set of questions and launch a focused interview session.
               </p>
@@ -99,18 +101,12 @@ function QuestionsPage() {
               ))}
             </select>
 
-            <select
-              className="w-full rounded-xl border border-white/10 bg-slate-900/70 px-4 py-3 text-sm text-slate-100 outline-none transition focus:border-cyan-300/40 focus:ring-2 focus:ring-cyan-400/20"
-              value={roleFilter}
-              onChange={(e) => setRoleFilter(e.target.value as Role | '')}
-            >
-              <option value="">All roles</option>
-              {roles.map((r) => (
-                <option key={r} value={r}>
-                  {r.replace('_', ' ')}
-                </option>
-              ))}
-            </select>
+            <input
+                   className="border rounded p-2 text-sm"
+                   placeholder="Filter by role..."
+                  value={roleFilter}
+                   onChange={(e) => setRoleFilter(e.target.value)}
+            />
           </div>
         </section>
 

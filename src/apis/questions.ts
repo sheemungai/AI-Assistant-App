@@ -1,14 +1,14 @@
-import type { CreateQuestionPayload, CreateSampleAnswerPayload, Question, SampleAnswer } from '../types';
+import type { CreateQuestionPayload, CreateSampleAnswerPayload, GenerateQuestionPayload, Question, SampleAnswer } from '../types';
 import { client } from './client';
 
 
 const QUESTIONS_BASE = '/questions/questions';
 const ANSWERS_BASE = '/questions/sample-answers';
+const GENERATE_URL = '/questions/generate';
 
 
 export type Difficulty = 'easy' | 'medium' | 'hard';
 export type QuestionType = 'behavioral' | 'technical' | 'situational';
-export type Role = 'software_developer' | 'sales_manager' | 'product_manager';
 export const questionsApi = {
     
   list: () => client.get<Question[]>(`${QUESTIONS_BASE}/`),
@@ -18,6 +18,8 @@ export const questionsApi = {
   update: (id: number, data: Partial<CreateQuestionPayload>) =>
     client.patch<Question>(`${QUESTIONS_BASE}/${id}/`, data),
   delete: (id: number) => client.delete<void>(`${QUESTIONS_BASE}/${id}/`),
+   generate: (data: GenerateQuestionPayload) =>
+    client.post<Question>(`${GENERATE_URL}/`, data),
 };
 
 export const sampleAnswersApi = {

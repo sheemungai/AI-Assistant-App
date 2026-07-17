@@ -1,6 +1,6 @@
 import type { Status } from "../apis/interviews";
-import type { Difficulty, QuestionType, Role } from "../apis/questions";
-import type { ExperienceLevel, TargetRole } from "../apis/users";
+import type { Difficulty, QuestionType} from "../apis/questions";
+import type { ExperienceLevel } from "../apis/users";
 
 export interface AuthUser {
   id: number;
@@ -44,7 +44,7 @@ export interface Profile {
   username: string;       // read-only (source: user.username)
   email: string;
   full_name: string;
-  target_role: TargetRole  | null;
+  target_role: string  | null;
   experience_level: ExperienceLevel | null;
   created_at: string;     // read-only
   updated_at: string;     // read-only
@@ -53,7 +53,7 @@ export interface Profile {
 export interface UpdateProfilePayload {
   email?: string;
   full_name?: string;
-  target_role?: TargetRole | null;
+  target_role?: string | null;
   experience_level?: ExperienceLevel | null;
 }
 
@@ -78,7 +78,7 @@ export interface Question {
     topic: string;
     difficulty: Difficulty;
     question_type: QuestionType;
-    role: Role;
+    role: string;
     sample_answers: SampleAnswer[];
     created_at: string;
     updated_at: string;
@@ -90,7 +90,14 @@ export interface CreateQuestionPayload {
     topic: string;
     difficulty?: Difficulty;
     question_type?: QuestionType;
-    role?: Role;
+    role?: string;
+}
+
+export interface GenerateQuestionPayload {
+  role: string;
+  topic: string;
+  difficulty?: Difficulty;
+  question_type?: QuestionType;
 }
 
 export interface AnalyticsOverview {
@@ -108,7 +115,7 @@ export interface TopicStat {
 export interface TrendEntry {
   date: string;
   title: string;
-  role: Role;
+  role: string;
   overall_score: number;
 }
 
@@ -137,7 +144,7 @@ export interface CreateAnswerSubmissionPayload {
 export interface InterviewSession {
   id: number;
   title: string;
-  role: Role;
+  role: string;
   experience_level: ExperienceLevel | null;
   questions: number[];
   status: Status;
@@ -150,7 +157,7 @@ export interface InterviewSession {
 
 export interface CreateInterviewSessionPayload {
   title: string;
-  role: Role;
+  role: string;
   experience_level?: ExperienceLevel | null;
   question_ids?: number[];
 }
