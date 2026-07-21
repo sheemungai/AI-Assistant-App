@@ -5,7 +5,7 @@ import { StatCard } from '@/components/StatCard'
 export const Route = createFileRoute('/dashboard')({ component: DashboardPage })
 
 function DashboardPage() {
-  const { overview, byTopic, trend } = useDashboard()
+  const { overview, byTopic, trend, strengths } = useDashboard()
 
   return (
     <div className="relative min-h-[calc(100vh-4rem)] overflow-hidden bg-slate-950 px-6 py-12 text-slate-50">
@@ -104,6 +104,50 @@ function DashboardPage() {
               ))}
             </div>
           )}
+        </section>
+
+        <section className="grid gap-6 md:grid-cols-2">
+          <div className="rounded-3xl border border-white/10 bg-white/5 p-6 shadow-2xl shadow-black/25 ring-1 ring-inset ring-white/5 backdrop-blur">
+            <h2 className="text-lg font-semibold text-slate-50">Top Strengths</h2>
+            <p className="mt-1 text-sm text-slate-300">What's showing up most in your feedback.</p>
+
+            {strengths.isLoading && <p className="mt-4 text-sm text-slate-300">Loading...</p>}
+            {strengths.isError && <p className="mt-4 text-sm text-red-300">{strengths.error.message}</p>}
+            {strengths.data && strengths.data.top_strengths.length === 0 && (
+              <p className="mt-4 text-sm text-slate-400">Complete a session to see your strengths.</p>
+            )}
+            {strengths.data && strengths.data.top_strengths.length > 0 && (
+              <ul className="mt-4 flex flex-col gap-2">
+                {strengths.data.top_strengths.map((s, i) => (
+                  <li key={i} className="flex items-start gap-2 text-sm text-slate-200">
+                    <span className="mt-0.5 text-emerald-300">✓</span>
+                    {s}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+
+          <div className="rounded-3xl border border-white/10 bg-white/5 p-6 shadow-2xl shadow-black/25 ring-1 ring-inset ring-white/5 backdrop-blur">
+            <h2 className="text-lg font-semibold text-slate-50">Key Improvement Areas</h2>
+            <p className="mt-1 text-sm text-slate-300">Focus areas based on your recent answers.</p>
+
+            {strengths.isLoading && <p className="mt-4 text-sm text-slate-300">Loading...</p>}
+            {strengths.isError && <p className="mt-4 text-sm text-red-300">{strengths.error.message}</p>}
+            {strengths.data && strengths.data.top_improvements.length === 0 && (
+              <p className="mt-4 text-sm text-slate-400">Complete a session to see improvement areas.</p>
+            )}
+            {strengths.data && strengths.data.top_improvements.length > 0 && (
+              <ul className="mt-4 flex flex-col gap-2">
+                {strengths.data.top_improvements.map((s, i) => (
+                  <li key={i} className="flex items-start gap-2 text-sm text-slate-200">
+                    <span className="mt-0.5 text-amber-300">!</span>
+                    {s}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
         </section>
 
         <section className="rounded-3xl border border-white/10 bg-white/5 p-6 shadow-2xl shadow-black/25 ring-1 ring-inset ring-white/5 backdrop-blur">

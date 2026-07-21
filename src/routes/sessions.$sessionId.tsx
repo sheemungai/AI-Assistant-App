@@ -4,6 +4,7 @@ import { useSession } from '@/hooks/useSession'
 import { useQuestionsByIds } from '@/hooks/useQuestionsByIds'
 import { AnswerForm } from '@/components/AnswerForm'
 import { interviewSessionApi } from '@/apis/interviews'
+import { SessionSummary } from '#/components/SessionSummary'
 
 export const Route = createFileRoute('/sessions/$sessionId')({
   component: SessionPage,
@@ -12,8 +13,8 @@ export const Route = createFileRoute('/sessions/$sessionId')({
 function SessionPage() {
   const { sessionId } = Route.useParams()
   const id = Number(sessionId)
-  const queryClient = useQueryClient()
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
 
   const { data: session, isLoading, isError, error } = useSession(id)
   const questionQueries = useQuestionsByIds(session?.questions ?? [])
@@ -21,8 +22,10 @@ function SessionPage() {
   const completeMutation = useMutation({
     mutationFn: () => interviewSessionApi.complete(id),
     onSuccess: () => {
+      // Refresh session data (now shows status: 'completed' + summary)
+      queryClient.invalidateQueries({ queryKey: ['session', id] })
+      // Pre-warm the dashboard's data so it's fresh once they click through
       queryClient.invalidateQueries({ queryKey: ['analytics'] })
-      navigate({ to: '/dashboard' })
     },
   })
 
@@ -41,16 +44,12 @@ function SessionPage() {
         <span className="text-xs bg-gray-100 rounded px-2 py-1">{session.status}</span>
       </div>
 
-      {session.overall_score && (
-        <p className="text-sm font-medium">Overall score: {session.overall_score}/10</p>
-      )}
-
       {questionQueries.map((q) => {
         if (!q.data) return null
         const existingAnswer = session.answers.find((a) => a.question === q.data.id)
         return (
           <AnswerForm
-            key={q.data.id}
+            key={q.data.id} 
             sessionId={id}
             question={q.data}
             existingAnswer={existingAnswer}
@@ -66,6 +65,18 @@ function SessionPage() {
         >
           {completeMutation.isPending ? 'Completing...' : 'Complete Session'}
         </button>
+      )}
+
+      {session.status === 'completed' && (
+        <>
+          <SessionSummary answers={session.answers} />
+          <button
+            onClick={() => navigate({ to: '/dashboard' })}
+            className="bg-blue-600 text-white rounded px-6 py-3 font-medium"
+          >
+            Continue to Dashboard
+          </button>
+        </>
       )}
     </div>
   )

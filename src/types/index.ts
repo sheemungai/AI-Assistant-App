@@ -161,3 +161,8 @@ export interface CreateInterviewSessionPayload {
   experience_level?: ExperienceLevel | null;
   question_ids?: number[];
 }
+
+export interface StrengthsImprovements {
+  top_strengths: string[];
+  top_improvements: string[];
+}

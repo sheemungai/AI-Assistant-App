@@ -16,6 +16,12 @@ export function useDashboard() {
     queryKey: ['analytics', 'trend'],
     queryFn: analyticsApi.trend,
   })
+  const strengths = useQuery({
+    queryKey: ['analytics', 'strengths-improvements'],
+    queryFn: analyticsApi.strengthsImprovements,
+  })
 
-  return { overview, byTopic, trend }
+
+
+  return { overview, byTopic, trend, strengths }
 }
